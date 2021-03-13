@@ -36,3 +36,6 @@ jobs:
             __EOF__
             docker-compose up --build -d
             docker images
+            
+    - name: Build the nginx for vts
+      run: echo hello
