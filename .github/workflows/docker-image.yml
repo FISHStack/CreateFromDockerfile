@@ -59,17 +59,5 @@ jobs:
             __EOF__
             docker-compose up --build -d
             docker images
-
-    - name: Checkout Dockerfile
-      uses: actions/checkout@v2
-      # 使用Docker官方制作的action
-      # https://github.com/marketplace/actions/build-and-push-docker-images
-    - name: Build and Push Docker Iamge
-      uses: docker/build-push-action@v1
-      with: 
-        registry: ${{ secrets.ALI_DOCKER_HUB_REGISTRY }}
-        username: ${{ secrets.ALI_DOCKER_HUB_USN }}
-        password: ${{ secrets.ALI_DOCKER_HUB_PWD }}
-        repository: lan-k8s/nginx:v1
-        # tag_with_sha: true
-        # path: 'docker'
+            docker login --username=${{ secrets.ALI_DOCKER_HUB_USN }} registry.cn-shenzhen.aliyuncs.com -p ${{ secrets.ALI_DOCKER_HUB_PWD }}
+            docker push registry.cn-shenzhen.aliyuncs.com/lan-k8s/nginx:vts
