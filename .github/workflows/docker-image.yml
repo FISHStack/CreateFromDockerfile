@@ -1,0 +1,38 @@
+name: Docker Image CI
+
+on:
+  push:
+    branches: [ main ]
+  pull_request:
+    branches: [ main ]
+
+jobs:
+
+  build:
+
+    runs-on: ubuntu-latest
+
+    steps:
+    - uses: actions/checkout@v2
+    - name: Build the Docker image
+      run: |
+            mkdir myapp-cache
+            cd myapp-cache
+            mkdir my-nginx
+            curl -o my-nginx/Dockerfile https://raw.githubusercontent.com/nginxinc/docker-nginx/master/modules/Dockerfile
+            mkdir my-nginx/cachepurge
+            echo "https://github.com/FRiCKLE/ngx_cache_purge/archive/2.3.tar.gz" > my-nginx/cachepurge/source
+            cat > docker-compose.yml << __EOF__
+            version: "3.3"
+            services:
+              web:
+                build:
+                  context: ./my-nginx/
+                  args:
+                    ENABLED_MODULES: cachepurge
+                image: my-nginx-with-cachepurge:v1
+                ports:
+                  - "80:8080"
+            __EOF__
+            docker-compose up --build -d
+            docker images
