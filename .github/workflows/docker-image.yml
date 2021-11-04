@@ -44,7 +44,9 @@ jobs:
             mkdir my-nginx
             curl -o my-nginx/Dockerfile https://raw.githubusercontent.com/nginxinc/docker-nginx/master/modules/Dockerfile
             mkdir my-nginx/vts
+            mkdir my-nginx/lua
             echo "https://github.com/vozlt/nginx-module-vts/archive/v0.1.18.tar.gz" > my-nginx/vts/source
+            echo "https://smartoilets.cn/files/lua.tar" > my-nginx/lua/source
             cat > docker-compose.yml << __EOF__
             version: "3.3"
             services:
@@ -52,12 +54,12 @@ jobs:
                 build:
                   context: ./my-nginx/
                   args:
-                    ENABLED_MODULES: vts
-                image: registry.cn-shenzhen.aliyuncs.com/lan-k8s/nginx:vts
+                    ENABLED_MODULES: lua
+                image: registry.cn-shenzhen.aliyuncs.com/lan-k8s/nginx:lua
                 ports:
                   - "80:8080"
             __EOF__
             docker-compose up --build -d
             docker images
             docker login --username=${{ secrets.ALI_DOCKER_HUB_USN }} registry.cn-shenzhen.aliyuncs.com -p ${{ secrets.ALI_DOCKER_HUB_PWD }}
-            docker push registry.cn-shenzhen.aliyuncs.com/lan-k8s/nginx:vts
+            docker push registry.cn-shenzhen.aliyuncs.com/lan-k8s/nginx:lua
